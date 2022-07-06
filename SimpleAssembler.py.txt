@@ -1,3 +1,12 @@
+"""
+CO Group No. : A_67
+Members :-
+    1. Prem Kamal Jain 2021483
+    2. Ayush Prakash   2021456
+    3. Abhinav Arvind  2021440
+    
+"""
+
 import sys
 A = {'add': '10000', 'sub': '10001', 'mul': "10110",'xor': '11010', 'or': '11011', 'and': '11100'}
 B = {'mov': '10010', 'ls': '11001'}
@@ -60,7 +69,9 @@ for line in lines:
         
     for i in operands :#Illegal immediate values
         if i[0]=='$' :
-            if int(i[1:])>255 or int(i[1:])<0 :
+            xy = i[1:]
+            xyz=int(xy)
+            if xyz>255 or xyz<0 :
                 print('Illegal Immediate values(more than 8 bits) ')
 
     if instruction in D.keys():#Use of undefined variables
