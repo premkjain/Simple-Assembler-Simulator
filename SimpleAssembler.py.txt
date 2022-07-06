@@ -17,6 +17,8 @@ check = 0
 hlt_chk=0
 hlt_a=0
 cnt1=0
+check_var=0
+check_var1=0
 
 for line in lines:
     if line == '' :
@@ -33,8 +35,7 @@ for line in lines:
         print('hlt not being used as the last instruction')
         exit(0)
 
-    
-        
+
 
     if instruction=='hlt' :
         hlt_chk=1
@@ -68,14 +69,14 @@ for line in lines:
                 print("Undefined variable/label used in place of variable")
                 exit(0)
 
-    if instruction=='var' :#variables not declared at the begning
-        fuc=1
-        for lin in lines :
-            if fuc < cnt1 :
-                ct, *op = lin.split()
-                if(ct!='var') :
-                    print('variables not declared at the beginning')
-                    exit(0)
+    if instruction =='var' :
+        check_var=1
+    elif instruction!='var':
+        check_var=0
+        check_var1=1
+    elif check_var==1 and check_var1==1 :
+        print('variable error')
+        exit(0)
 
 if hlt_chk!=1 :
     print('missing hlt instruction')
