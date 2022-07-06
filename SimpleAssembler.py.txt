@@ -19,21 +19,22 @@ hlt_a=0
 cnt1=0
 
 for line in lines:
+    if line == '' :
+        print('empty line')
+        exit(0)
     instruction, *operands = line.split()
     chk_ins=0 
     cnt1+=1
+
+    if instruction=="var":
+        Var=operands.copy()
 
     if hlt_chk==1 :
         print('hlt not being used as the last instruction')
         exit(0)
 
-    if instruction[len(instruction)-1] ==":":
-        for i in operands:
-            if i!=instruction:
-                instruction,i = i,instruction
-                break
-            else:
-                continue
+    
+        
 
     if instruction=='hlt' :
         hlt_chk=1
@@ -42,6 +43,10 @@ for line in lines:
         if instruction in i.keys() :
             chk_ins=1
             break 
+    #check the particular line
+    
+    if (chk_ins==0 and instruction[len(instruction)-1]==":"):
+            chk_ins=1
     if(chk_ins==0 and instruction!='var') :
         print('Typos in instruction name')
         exit(0)
@@ -58,9 +63,9 @@ for line in lines:
                 print('Illegal Immediate values(more than 8 bits) ')
 
     if instruction in D.keys():#Use of undefined variables
-        for i in operands:
-            if i not in Var:
-                print("Undefined variable")
+        for i in Var:
+            if i not in operands[len(operands)-1]:
+                print("Undefined variable/label used in place of variable")
                 exit(0)
 
     if instruction=='var' :#variables not declared at the begning
@@ -69,19 +74,39 @@ for line in lines:
             if fuc < cnt1 :
                 ct, *op = lin.split()
                 if(ct!='var') :
-                    print('variables not declared at the begning')
+                    print('variables not declared at the beginning')
                     exit(0)
 
 if hlt_chk!=1 :
     print('missing hlt instruction')
+    exit(0)
 
 
 
 for line in lines :
     s=''
     instruction, *operands=line.split()
+    if instruction[len(instruction)-1] ==":":
+        if instruction[0:len(instruction)-1] in Var:
+            print("Labels used instead of register ")
+            exit(0)
+        for i in operands:
+            if i!=instruction:
+                i,instruction=instruction,i
+                operands=operands[1:]
+                
+
+                
+                break
+            else:
+                continue
+    
+        
 #TYPE-F
     if (instruction in F.keys() and operands == []):
+        if (len(operands)>0):
+            print("Invalid register use")
+            exit(0)
         check=1
         hlt_chk=1
         s += F[instruction]+'0'*11
@@ -97,7 +122,7 @@ for line in lines :
         for i in range(0,len(operands)):
             if operands[i] not in reg_add.keys():
                 print("Register name typo")
-                break
+                exit(0)
         s += A[instruction]
         s += '00'
         for i in operands:
@@ -106,32 +131,35 @@ for line in lines :
         print()
     
 # TYPE-B 
-    elif operands[len(operands)-1] not in reg_add.keys() and operands!=[] and instruction in B.keys():
+    elif operands[len(operands)-1] not in reg_add.keys() and operands!=[] and instruction in B.keys() :
         check=1
         if operands[0] not in reg_add.keys():
             print("Register Name typo")
             exit(0)
         if (len(operands)!=2):
             print("Insufficient registers")
+            exit(0)
         s += B[instruction]
         s += reg_add[operands[0]]
         s1= bin(int(operands[1][1:]))
         if len(s1[2:])>8 and 0<=int(operands[1][1:])<=255:
             print("Illegal value of Imm")
+            exit(0)
         s += '0'*(8-len(s1)+2)
         s+=s1[2:]
         sys.stdout.write(s)
         print()
 
 #TYPE-C       
-    elif (instruction in C.keys() and operands[len(operands)-1] in reg_add.keys()):
+    elif (instruction in C.keys() and operands[len(operands)-1] in reg_add.keys()) :
         check=1
         for i in range(0,len(operands)):
             if operands[i] not in reg_add.keys():
                 print("Register name typo")
-                break
+                exit(0)
         if len(operands)!=2:
             print("insufficient operands")
+            exit(0)
             
         s += C[instruction]
         s += '00000'
@@ -141,12 +169,17 @@ for line in lines :
         print()
     
 #TYPE-D
-    elif instruction in D.keys():
+    elif instruction in D.keys() :
+        if (len(operands)!=2):
+            print("Insufficient commands")
+            exit(0)
+        if operands[0] not in reg_add.keys():
+            print("Register name typo")
         check=1
         s+=D[instruction]
         s+=reg_add[operands[0]]
         
-        s1= bin(cnt)
+        s1= bin(cnt1-1)
         
         s += '0'*(8-len(s1)+2)
         s+=s1[2:]
@@ -154,11 +187,14 @@ for line in lines :
         print()
 
 #Type E
-    elif instruction in E.keys():
+    elif instruction in E.keys() :
+        if (len(operands)!=1):
+            print()
         check=1
         s+=E[instruction]
         s+='0'*3
-        s1=bin(cnt)
+        s1=bin(cnt1-1)
         s+= '0'*(8-len(s1)+2)
         s+=s1[2:]
         sys.stdout.write(s)
+        print()
