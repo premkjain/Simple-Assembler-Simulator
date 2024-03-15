@@ -1,6 +1,6 @@
 # Simple Assembler Simulator
 
-## Project Summary
+## Project Overview
 
 This project involves designing and implementing a custom assembler and simulator for a 16-bit Instruction Set Architecture (ISA), undertaken by groups of three students. The ISA features a comprehensive set of instructions, encompassing arithmetic operations, data movement, and control flow, to facilitate a wide range of computational tasks.
 
